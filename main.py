@@ -33,13 +33,11 @@ app = Client(
 
 from handlers.start import start_handler
 from handlers.instagram import insta_handler
-from handlers.youtube import yt_handler
 from handlers.caption import caption_handler
 from handlers.chat import chat_handler
 
 start_handler(app)
 insta_handler(app)
-yt_handler(app)
 caption_handler(app)
 chat_handler(app)
 
