@@ -1,10 +1,19 @@
-import instaloader
+import yt_dlp
+import os
 
 def download_instagram(url):
+    os.makedirs("downloads", exist_ok=True)
+
+    ydl_opts = {
+        "outtmpl": "downloads/insta_%(id)s.%(ext)s",
+        "format": "mp4/best",
+        "quiet": True
+    }
+
     try:
-        L = instaloader.Instaloader(dirname_pattern="downloads", save_metadata=False)
-        shortcode = url.split("/")[-2]
-        L.download_post(instaloader.Post.from_shortcode(L.context, shortcode), target="insta")
-        return None
-    except:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=True)
+            return ydl.prepare_filename(info)
+    except Exception as e:
+        print("Insta error:", e)
         return None
