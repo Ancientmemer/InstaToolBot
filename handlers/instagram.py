@@ -5,7 +5,7 @@ import os
 def insta_handler(app):
     @app.on_message(filters.text & filters.regex("instagram.com"))
     async def insta(_, msg):
-        m = await msg.reply("⏳ Downloading Instagram post...")
+        m = await msg.reply("⏳ Downloading Instagram post...\n\nIt may take some time 🫠\nPlease wait....\n\nᴩᴏᴡᴇʀᴇᴅ ʙʏ: @jb_links")
 
         files = download_instagram(msg.text)
 
