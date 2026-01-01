@@ -7,10 +7,19 @@ import yt_dlp
 import instaloader
 
 
-IG_USERNAME = "memer_in_realms"  # 🔴 CHANGE THIS if different
+# 🔴 CHANGE THIS TO YOUR INSTAGRAM USERNAME
+IG_USERNAME = "memer_in_realms"
+
+
+# 🔑 REMOVE igsh / tracking params
+def clean_instagram_url(url: str) -> str:
+    return url.split("?")[0]
 
 
 def download_instagram(url):
+    # clean the URL first (VERY IMPORTANT)
+    url = clean_instagram_url(url)
+
     # small delay to avoid rate limits
     time.sleep(2)
 
@@ -18,16 +27,16 @@ def download_instagram(url):
     base_dir = f"downloads/insta_{uid}"
     os.makedirs(base_dir, exist_ok=True)
 
-    # ===============================
-    # 1️⃣ TRY VIDEO (REELS / VIDEO POSTS)
-    # ===============================
+    # ==================================================
+    # 1️⃣ TRY VIDEO FIRST (REELS / VIDEO POSTS) – yt-dlp
+    # ==================================================
     ydl_opts = {
         "outtmpl": f"{base_dir}/video.%(ext)s",
         "format": "bv*+ba/best",
         "merge_output_format": "mp4",
         "quiet": True,
         "retries": 2,
-        "cookiefile": "cookies.txt",  # optional but good
+        "cookiefile": "cookies.txt",  # optional but helps
     }
 
     try:
@@ -39,11 +48,12 @@ def download_instagram(url):
             return videos
 
     except Exception:
-        pass  # if no video, fall back to photos
+        # if no video, continue to photo fallback
+        pass
 
-    # ===============================
-    # 2️⃣ FALLBACK → PHOTO POSTS (INSTALOADER)
-    # ===============================
+    # ==================================================
+    # 2️⃣ PHOTO POSTS / CAROUSEL PHOTOS – instaloader
+    # ==================================================
     try:
         L = instaloader.Instaloader(
             dirname_pattern=base_dir,
@@ -52,10 +62,16 @@ def download_instagram(url):
             quiet=True,
         )
 
-        # 🔑 LOAD LOGIN SESSION (OPTION 1)
-        L.load_session_from_file(IG_USERNAME)
+        # 🔑 LOAD SAVED LOGIN SESSION (OPTION 1)
+        L.load_session_from_file(
+            IG_USERNAME,
+            filename=f"/data/data/com.termux/files/home/.config/instaloader/session-{IG_USERNAME}"
+        )
 
-        shortcode = url.rstrip("/").split("/")[-1]
+        # extract shortcode safely
+        parts = url.rstrip("/").split("/")
+        shortcode = parts[-1]
+
         post = instaloader.Post.from_shortcode(L.context, shortcode)
         L.download_post(post, target=base_dir)
 
