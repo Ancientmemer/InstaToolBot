@@ -10,5 +10,5 @@ def start_handler(app):
             "🏷️ Instagram Caption + Hashtag Generator Use /caption\n"
             "🤖 Smart Auto Reply\n\n"
             "Send a link to begin!\n\n"
-            "ᴩᴏᴡᴇʀᴇᴅ ʙʏ: @jb_links
+            "ᴩᴏᴡᴇʀᴇᴅ ʙʏ: @jb_links"
         )
