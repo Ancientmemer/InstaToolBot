@@ -5,7 +5,6 @@ import os
 
 def yt_handler(app):
 
-    # Step 1: When user sends YouTube link
     @app.on_message(filters.text & filters.regex("youtube.com|youtu.be"))
     async def yt_link(_, msg):
         url = msg.text.strip()
@@ -22,16 +21,14 @@ def yt_handler(app):
             reply_markup=keyboard
         )
 
-    # Step 2: Handle button click
     @app.on_callback_query(filters.regex("^yt_"))
     async def yt_callback(_, cq):
-        data = cq.data.split("|")
-        mode = data[0].replace("yt_", "")
-        url = data[1]
+        mode, url = cq.data.split("|")
 
-        await cq.message.edit("⏳ Downloading...\nIt may take some time 🫠\nPlease wait....\n\nᴩᴏᴡᴇʀᴇᴅ ʙʏ: @jb_links")
+        mode = mode.replace("yt_", "")
+        await cq.message.edit("⏳ Downloading...")
 
-        file = download_youtube(url, mode=mode)
+        file = download_youtube(url, mode)
 
         if not file or not os.path.exists(file):
             return await cq.message.edit("❌ Download failed")
