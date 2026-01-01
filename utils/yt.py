@@ -6,9 +6,15 @@ def download_youtube(url):
 
     ydl_opts = {
         "outtmpl": "downloads/yt_%(id)s.%(ext)s",
-        "format": "bestvideo+bestaudio/best",
+        "format": "bv*[vcodec!=?]+ba/best",
         "merge_output_format": "mp4",
         "cookiefile": "cookies.txt",
+        "noplaylist": True,
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["android", "web"]
+            }
+        },
         "quiet": True
     }
 
@@ -17,5 +23,5 @@ def download_youtube(url):
             info = ydl.extract_info(url, download=True)
             return ydl.prepare_filename(info)
     except Exception as e:
-        print("YT error:", e)
+        print("YT ERROR:", e)
         return None
