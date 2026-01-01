@@ -1,24 +1,35 @@
 import yt_dlp
 import os
 import glob
+import uuid
 
 def download_instagram(url):
-    os.makedirs("downloads", exist_ok=True)
+    # unique folder for each request
+    uid = str(uuid.uuid4())[:8]
+    base_dir = f"downloads/insta_{uid}"
+    os.makedirs(base_dir, exist_ok=True)
 
     ydl_opts = {
-        "outtmpl": "downloads/insta_%(id)s_%(index)s.%(ext)s",
-        "format": "best",
+        "outtmpl": f"{base_dir}/%(id)s_%(index)s.%(ext)s",
         "cookiefile": "cookies.txt",
         "quiet": True,
-        "noplaylist": True
+        "merge_output_format": "mp4",
+        "extractor_args": {
+            "instagram": {
+                "include_ads": False
+            }
+        }
     }
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.extract_info(url, download=True)
 
-        # collect all downloaded files
-        files = sorted(glob.glob("downloads/insta_*"))
+        # collect ALL files (jpg, mp4, webp etc)
+        files = sorted(
+            glob.glob(f"{base_dir}/*")
+        )
+
         return files if files else None
 
     except Exception as e:
