@@ -6,8 +6,7 @@ def start_handler(app):
         await msg.reply(
             "🔥 **InstaToolBot**\n\n"
             "📥 Instagram Reel/Post Downloader\n"
-            "▶️ YouTube Video/Audio Downloader\n"
-            "🏷️ Caption + Hashtag Generator\n"
+            "🏷️ Caption + Hashtag Generator Use /caption\n"
             "🤖 Smart Auto Reply\n\n"
-            "Send a link or use commands!"
+            "Send an instagram link to begin!"
         )
