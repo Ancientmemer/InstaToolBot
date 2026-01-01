@@ -6,10 +6,18 @@ def insta_handler(app):
     @app.on_message(filters.text & filters.regex("instagram.com"))
     async def insta(_, msg):
         m = await msg.reply("⏳ Downloading Instagram media...")
-        file = download_instagram(msg.text)
 
-        if file and os.path.exists(file):
-            await msg.reply_video(file)
+        files = download_instagram(msg.text)
+
+        if not files:
+            return await m.edit("❌ Failed to download Instagram post.")
+
+        await m.edit(f"✅ Downloaded {len(files)} item(s)")
+
+        for file in files:
+            if file.endswith(".mp4"):
+                await msg.reply_video(file)
+            else:
+                await msg.reply_photo(file)
+
             os.remove(file)
-        else:
-            await m.edit("❌ Failed to download Instagram media.")
