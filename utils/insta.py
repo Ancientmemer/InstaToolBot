@@ -6,7 +6,8 @@ def download_instagram(url):
 
     ydl_opts = {
         "outtmpl": "downloads/insta_%(id)s.%(ext)s",
-        "format": "mp4/best",
+        "format": "best",
+        "cookiefile": "cookies.txt",
         "quiet": True
     }
 
