@@ -6,16 +6,10 @@ def download_youtube(url):
 
     ydl_opts = {
         "outtmpl": "downloads/yt_%(id)s.%(ext)s",
-        "format": "bv*[vcodec!=?]+ba/best",
-        "merge_output_format": "mp4",
+        "format": "bestaudio/best",
         "cookiefile": "cookies.txt",
-        "noplaylist": True,
-        "extractor_args": {
-            "youtube": {
-                "player_client": ["android", "web"]
-            }
-        },
-        "quiet": True
+        "quiet": True,
+        "noplaylist": True
     }
 
     try:
