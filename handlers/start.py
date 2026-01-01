@@ -4,9 +4,11 @@ def start_handler(app):
     @app.on_message(filters.command("start"))
     async def start(_, msg):
         await msg.reply(
-            "🔥 **InstaToolBot**\n\n"
+            "🔥 **Multi Social media downloader**\n\n"
             "📥 Instagram Reel/Post Downloader\n"
-            "🏷️ Caption + Hashtag Generator Use /caption\n"
+            "▶️ Youtube Video downloader\n"
+            "🏷️ Instagram Caption + Hashtag Generator Use /caption\n"
             "🤖 Smart Auto Reply\n\n"
-            "Send an instagram link to begin!"
+            "Send a link to begin!\n\n"
+            "ᴩᴏᴡᴇʀᴇᴅ ʙʏ: @jb_links
         )
