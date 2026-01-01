@@ -5,7 +5,7 @@ import glob
 import time
 
 def download_instagram(url):
-    time.sleep(2)
+    time.sleep(2)  # anti rate-limit
 
     uid = str(uuid.uuid4())[:8]
     base_dir = f"downloads/insta_{uid}"
@@ -15,6 +15,7 @@ def download_instagram(url):
         "outtmpl": f"{base_dir}/%(id)s_%(index)s.%(ext)s",
         "cookiefile": "cookies.txt",
         "quiet": True,
+        "ignoreerrors": True,   # 🔑 MOST IMPORTANT LINE
         "retries": 2,
         "fragment_retries": 2,
         "http_headers": {
@@ -32,11 +33,7 @@ def download_instagram(url):
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.extract_info(url, download=True)
 
-        # collect ALL downloaded media
-        files = sorted(
-            glob.glob(f"{base_dir}/*")
-        )
-
+        files = sorted(glob.glob(f"{base_dir}/*"))
         return files if files else None
 
     except Exception as e:
