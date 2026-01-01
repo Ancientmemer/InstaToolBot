@@ -8,6 +8,7 @@ def download_youtube(url):
         "outtmpl": "downloads/yt_%(id)s.%(ext)s",
         "format": "bestvideo+bestaudio/best",
         "merge_output_format": "mp4",
+        "cookiefile": "cookies.txt",
         "quiet": True
     }
 
