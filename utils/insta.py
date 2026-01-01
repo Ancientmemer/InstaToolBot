@@ -5,8 +5,7 @@ import glob
 import time
 
 def download_instagram(url):
-    # small delay (anti rate-limit)
-    time.sleep(3)
+    time.sleep(2)
 
     uid = str(uuid.uuid4())[:8]
     base_dir = f"downloads/insta_{uid}"
@@ -33,7 +32,7 @@ def download_instagram(url):
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.extract_info(url, download=True)
 
-        # collect all media files
+        # collect ALL downloaded media
         files = sorted(
             glob.glob(f"{base_dir}/*")
         )
