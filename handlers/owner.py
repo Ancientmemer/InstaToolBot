@@ -1,78 +1,69 @@
 from pyrogram import filters
-import json
+from pymongo import MongoClient
 import os
 
-# 🔴 CHANGE THIS TO YOUR TELEGRAM USER ID
-OWNER_ID = 123456789  
+# 🔴 CHANGE THIS
+OWNER_ID = 8336106518  # your Telegram ID
 
-USERS_FILE = "database/users.json"
-
-
-# -------------------------
-# Helpers
-# -------------------------
-def load_users():
-    if not os.path.exists(USERS_FILE):
-        return []
-    with open(USERS_FILE, "r") as f:
-        return json.load(f)
-
-
-def save_users(users):
-    with open(USERS_FILE, "w") as f:
-        json.dump(users, f)
-
-
-def add_user(user_id):
-    users = load_users()
-    if user_id not in users:
-        users.append(user_id)
-        save_users(users)
-
+# 🔴 MongoDB URI (add in env)
+MONGO_URI = os.getenv("MONGO_URI")
 
 # -------------------------
-# Handlers
+# MongoDB Setup
 # -------------------------
+mongo = MongoClient(MONGO_URI)
+db = mongo["instatoolbot"]
+users_col = db["users"]
+
+
 def owner_handler(app):
 
-    # 🔹 Track users (call this on any message)
+    # -------------------------
+    # AUTO SAVE USERS
+    # -------------------------
     @app.on_message(filters.private)
-    async def track_users(_, msg):
-        add_user(msg.from_user.id)
-
-
-    # 🔹 /stats
-    @app.on_message(filters.command("stats") & filters.user(OWNER_ID))
-    async def stats(_, msg):
-        users = load_users()
-        await msg.reply(
-            f"📊 **Bot Stats**\n\n"
-            f"👤 Total Users: `{len(users)}`"
+    async def save_user(_, msg):
+        user_id = msg.from_user.id
+        users_col.update_one(
+            {"user_id": user_id},
+            {"$set": {"user_id": user_id}},
+            upsert=True
         )
 
+    # -------------------------
+    # /stats
+    # -------------------------
+    @app.on_message(filters.command("stats") & filters.user(OWNER_ID))
+    async def stats(_, msg):
+        total = users_col.count_documents({})
+        await msg.reply(
+            f"📊 **Bot Statistics**\n\n"
+            f"👤 Total Users: `{total}`"
+        )
 
-    # 🔹 /broadcast (reply based)
+    # -------------------------
+    # /broadcast (reply based)
+    # -------------------------
     @app.on_message(filters.command("broadcast") & filters.user(OWNER_ID))
     async def broadcast(_, msg):
 
         if not msg.reply_to_message:
             return await msg.reply(
-                "❌ **Usage:** Reply to a message and type `/broadcast`"
+                "❌ **Reply to a message and use `/broadcast`**"
             )
 
-        users = load_users()
-        success = 0
+        sent = 0
         failed = 0
 
-        for user_id in users:
+        for user in users_col.find({}):
             try:
-                await msg.reply_to_message.copy(user_id)
-                success += 1
+                await msg.reply_to_message.copy(user["user_id"])
+                sent += 1
             except:
                 failed += 1
 
         await msg.reply(
             f"📣 **Broadcast Completed**\n\n"
-            f"✅ Sent: `{success}`\n"
+            f"✅ Sent: `{sent}`\n"
             f"❌ Failed: `{failed}`"
         )
